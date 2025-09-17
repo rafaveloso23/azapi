@@ -1,0 +1,9 @@
+.terraform.lock.hcl
+backend.tf
+terraform.tfstate
+terraform.tfstate.backup
+.terraform/providers/registry.terraform.io/azure/azapi/1.15.0/linux_amd64/terraform-provider-azapi_v1.15.0
+.terraform/providers/registry.terraform.io/hashicorp/azurerm/4.44.0/linux_amd64/LICENSE.txt
+.terraform/providers/registry.terraform.io/hashicorp/azurerm/4.44.0/linux_amd64/terraform-provider-azurerm_v4.44.0_x5
+.terraform/providers/registry.terraform.io/hashicorp/random/3.7.2/linux_amd64/LICENSE.txt
+.terraform/providers/registry.terraform.io/hashicorp/random/3.7.2/linux_amd64/terraform-provider-random_v3.7.2_x5
