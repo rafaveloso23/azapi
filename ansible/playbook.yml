@@ -1,0 +1,42 @@
+---
+- name: Check if HCP Terraform project exists
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  vars:
+    hcp_organization: ""
+    hcp_projects_url: >-
+      https://app.terraform.io/api/v2/organizations/{{ hcp_organization }}/projects?filter%5Bnames%5D={{ project_name | urlencode }}
+
+  tasks:
+    - name: Query HCP Terraform API for project by name
+      ansible.builtin.uri:
+        url: "{{ hcp_projects_url }}"
+        method: GET
+        headers:
+          Authorization: "Bearer {{ hcp_token }}"
+          Content-Type: "application/vnd.api+json"
+        return_content: true
+        status_code: 200
+      register: api_response
+      no_log: true
+
+    - name: Validate API response structure
+      ansible.builtin.assert:
+        that:
+          - api_response.json is defined
+          - api_response.json.meta is defined
+          - api_response.json.meta['status-counts'] is defined
+          - api_response.json.meta['status-counts'].matching is defined
+          - api_response.json.meta['status-counts'].total is defined
+        fail_msg: "Unexpected response structure from HCP Terraform API"
+
+    - name: Print result
+      ansible.builtin.debug:
+        msg:
+          - "organization={{ hcp_organization }}"
+          - "project_name={{ project_name }}"
+          - "project_exists={{ ((api_response.json.meta['status-counts'].matching | default(0) | int) > 0) | ternary('true', 'false') }}"
+          - "matched={{ api_response.json.meta['status-counts'].matching | default(0) | int }}"
+          - "http_status={{ api_response.status | int }}"
